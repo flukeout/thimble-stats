@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% set currentPage = "kiosk" %}
+
+{% block title %}
+  Kiosk Slideshow
+{% endblock %}
+
+{% block script %}
+  <script src="js/kiosk.js" type="text/javascript" charset="utf-8"></script>
+  <link rel="stylesheet/less" href="css/kiosk.less" type="text/css">
+{% endblock %}
+
+{% block content %}
+  <div class="kiosk"></div>
+{% endblock %}

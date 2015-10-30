@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% set currentPage = "dashboard" %}
+
+{% block title %}
+  Dashboard
+{% endblock %}
+
+{% block script %}
+  <script src="js/dashboard.js" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+
+{% block content %}
+
+  <div class="stat-wrapper" stat="created">
+    <div class="stats">
+      <div class="today">
+        <h1>New Projects</h1>
+        <div class="heading">Today</div>
+        <div class="updated-today count"></div>
+      </div>
+      <div class="week">
+        <div class="heading">7 Day Trend</div>
+          <div class="graph">
+            <div class="graph-line max-line"></div>
+            <div class="graph-line mid-line"></div>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <h1 class="center">Recently Edited Projects</h1>
+  <div class="results dashboard-latest"></div>
+
+{% endblock %}
+
+<!-- Projects updated -->
+<!-- <div class="stat-wrapper" stat="updated">
+  <div class="stats">
+    <div class="today">
+      <h1>Projects Edited</h1>
+      <div class="heading">Today</div>
+      <div class="updated-today count"></div>
+    </div>
+    <div class="week">
+      <div class="heading">7 Day Trend</div>
+        <div class="graph">
+          <div class="graph-line max-line"></div>
+          <div class="graph-line mid-line"></div>
+        </div>
+      </div>
+  </div>
+</div> -->

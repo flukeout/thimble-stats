@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% set currentPage = "images" %}
+
+{% block title %}
+  <title>Thimble Stats - Latest Images</title>
+{% endblock %}
+
+{% block script %}
+  <script src="js/images.js" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+
+{% block content %}
+  <h1 class="center">Newest Published Images</h1>
+  <div class="images"></div>
+{% endblock %}

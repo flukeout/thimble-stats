@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% set currentPage = "search" %}
+
+{% block title %}
+  Find a Project
+{% endblock %}
+
+{% block script %}
+  <script src="js/search.js" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+
+{% block content %}
+  <div class="search-ui">
+    Find projects with <input type="text" class="project" /> in the description or title, or
+    authored by <input type="text" class="author" />.
+  </div>
+  <div class="results"></div>
+{% endblock %}

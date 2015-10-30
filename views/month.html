@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% set currentPage = "month" %}
+
+{% block title %}
+  A month of projects
+{% endblock %}
+
+{% block script %}
+  <script src="js/month.js" type="text/javascript" charset="utf-8"></script>
+  <link rel="stylesheet/less" href="css/month.less" type="text/css">
+{% endblock %}
+
+{% block content %}
+  <h1 class="center">Published Projects per Day</h1>
+  <div class="month"></div>
+  <div class="daily-summary">
+    <h2>Some awesome projects made on...<a href="#"><i class="fa fa-refresh refresh"></i></a></h2>
+    <h1 class="center">
+      <a class="previous" href="#" title="Previous Day">
+        <i class="fa fa-chevron-circle-left fa-lg"></i>
+      </a>
+      <span class="date"></span>
+      <a class="next" href="#" title="Next Day">
+        <i class="fa fa-chevron-circle-right fa-lg"></i>
+      </a>
+    </h1>
+    <div class="results dashboard-latest"></div>
+  </div>
+{% endblock %}
