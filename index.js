@@ -154,7 +154,7 @@ function fancySearch(query, parameters, req, res){
   });
 }
 
-var server = app.listen(8092, function () {
+var server = app.listen(process.env.PORT, function () {
   var host = server.address().address;
   var port = server.address().port;
 });
