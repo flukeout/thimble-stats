@@ -11,9 +11,24 @@
 {% endblock %}
 
 {% block content %}
+
   <div class="search-ui">
-    Find projects with <input type="text" class="project" /> in the description or title, or
-    authored by <input type="text" class="author" />.
+    Find projects with <input type="text" class="project" /> in the description or title<br/>
+    Or find a user <input type="text" class="author" />
   </div>
-  <div class="results"></div>
+
+  <div class="throbber hidden">
+    <i class="fa fa-search"></i>
+  </div>
+
+  <div class="results-wrapper author-results hidden">
+    <h1 class="center">We found <span class="count"></span> folks</h1>
+    <div class="author-list"></div>
+  </div>
+
+  <div class="results-wrapper search-results hidden">
+    <h1 class="center">We found <span class="count"></span> projects</h1>
+    <div class="results"></div>
+  </div>
+
 {% endblock %}

@@ -100,6 +100,7 @@ h1 {
     margin: 0 10px 10px 10px;
     overflow: hidden;
     padding-top: 10px;
+    position: relative;
 
     .iframe-wrapper {
       position: relative;
@@ -132,11 +133,31 @@ h1 {
       font-size: 15px;
       overflow: hidden;
       text-overflow: ellipsis;
-      width: 190px;
+      width: 185px;
       white-space: nowrap;
     }
 
-    a {
+    .author {
+      position: absolute;
+      bottom: 2px;
+      right: -6px;
+      display: block;
+      width: 20px;
+      height: 20px;
+      text-align: left;
+      color: white;
+      opacity: .7;
+      transition: all ease-out .15s;
+
+      &:hover {
+        opacity: 1;
+        transform: scale(1.04);
+      }
+
+    }
+
+
+    a.link {
       display: block;
       position: absolute;
       top: 0;
@@ -407,6 +428,7 @@ h1 {
   color: rgba(255,255,255,.7);
   background: #2d9961;
   padding: 15px;
+  line-height: 175%;
 
   a {
     color: white;
@@ -421,9 +443,110 @@ h1 {
     width: 250px;
     border: none;
     background: transparent;
-    border-bottom: solid 2px rgba(255,255,255,.7);
+    border-bottom: solid 2px rgba(255,255,255,.6);
     font-size: 20px;
     outline: none;
     color: white;
+  }
+}
+
+.bio {
+
+  text-align: center;
+
+  h1 {
+
+    height: 60px;
+
+    .salutation {
+      font-size: 16px;
+      font-weight: normal;
+      opacity: .6;
+    }
+
+    .username {
+      font-size: 55px;
+    }
+
+    .fa-user {
+      font-size: 35px;
+      position: relative;
+      top: -2px;
+      margin-right: 10px;
+    }
+  }
+
+  h2 {
+    font-size: 22px;
+    margin: 0;
+    opacity: .8;
+    font-weight: 300;
+    margin-bottom: 30px;
+  }
+
+}
+
+.hidden {
+  display: none;
+}
+
+
+.results-wrapper {
+  h2 {
+    text-align: center;
+  }
+}
+
+
+.author-results {
+  margin: 0 auto;
+  width: 300px;
+
+  a {
+    text-align: center;
+    display: block;
+    color: white;
+    text-decoration: none;
+    opacity: .7;
+    margin: 4px 0;
+    font-size: 18px;
+    transition: opacity .1s ease-out;
+
+    &:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+  }
+}
+
+.throbber {
+  text-align: center;
+  font-size: 40px;
+  opacity: .7;
+
+  i {
+    animation: bike 2s infinite ease-out;
+    display: block;
+  }
+
+}
+
+@keyframes bike {
+  0% {
+    transform: scale(1);
+    animation-timing-function: ease-out;
+  }
+  25% {
+    transform: translateX(60px);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: translateX(0px);
+    animation-timing-function: ease-out;
+  }
+  75% {
+    animation-timing-function: ease-in;
+    transform: translateX(-60px);
   }
 }

@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% set currentPage = "user" %}
+
+{% block title %}
+  Find a Project
+{% endblock %}
+
+{% block script %}
+  <script src="/js/user.js" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+
+
+
+{% block content %}
+
+  <script>
+    var user = "{{ user}}"
+  </script>
+
+  <div class="bio">
+    <h1>
+      <!-- <div class="salutation">Let's hear it for...</div> -->
+      <div><i class="fa fa-user"></i><span class="username"></span></div>
+    </h1>
+    <h2>Has made <span class="project-count"></span> awesome projects</h2>
+    <div class="results"></div></div>
+  </div>
+  <!--
+    <div class="search-ui">
+      Find projects with <input type="text" class="project" /> in the description or title, or
+      authored by <input type="text" class="author" />.
+    </div>
+  -->
+
+{% endblock %}

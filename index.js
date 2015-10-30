@@ -47,6 +47,11 @@ app.get('/images', function(req, res) {
   res.render('images.html');
 });
 
+app.get('/user/:user_id', function(req, res) {
+  var user = req.params.user_id;
+  res.render('user.html', { "user" : user });
+});
+
 app.get('/kiosk', function(req, res) {
   res.render('kiosk.html');
 });
@@ -58,6 +63,25 @@ app.get('/search', function(req, res) {
 //------------------//
 //  Search queries  //
 //------------------//
+
+
+//Gets all the stuff about a user
+app.get('/get-user-projects', function (req, res) {
+  var url_parts = url.parse(req.url, true);
+  var user = JSON.parse(url_parts.query.user) || "";
+  var arguments = [user];
+  var query = "select * from projects, users where projects.published_id is not NULL and projects.user_id = users.id and projects.user_id = $1";
+  fancySearch(query, arguments, req, res);
+});
+
+//Get username
+app.get('/get-username', function (req, res) {
+  var url_parts = url.parse(req.url, true);
+  var user = JSON.parse(url_parts.query.user) || "";
+  var arguments = [user];
+  var query = "select * from users where id = $1";
+  fancySearch(query, arguments, req, res);
+});
 
 
 //Gets the stats for the latest created published projects
@@ -82,7 +106,7 @@ app.get('/find-projects', function (req, res) {
   fancySearch(query, arguments, req, res);
 });
 
-//Finds projects by author
+//Finds authors
 app.get('/author', function (req, res) {
   var url_parts = url.parse(req.url, true);
   var terms = JSON.parse(url_parts.query.terms) || "";
@@ -93,7 +117,7 @@ app.get('/author', function (req, res) {
     termsString = termsString + "%" + terms[i] + "%";
   }
   var arguments = [termsString];
-  var query = "select users.id, projects.* from users, projects where projects.publish_url is not NULL and users.id = projects.user_id and lower(users.name) similar to $1::text limit 40";
+  var query = "select * from users where lower(users.name) similar to $1::text order by name";
   fancySearch(query, arguments, req, res);
 });
 

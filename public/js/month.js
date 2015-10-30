@@ -106,8 +106,9 @@ function dailyTable(data){
   for(var i = 0; i < data.rows.length; i++){
     var row = data.rows[i];
     var rowEl = $("<div class='result' />");
-    rowEl.append("<div class='iframe-wrapper'><iframe scrolling='no' sandbox src="+row.publish_url+"></iframe><a href="+row.publish_url+"></a></div>");
+    rowEl.append("<div class='iframe-wrapper'><iframe scrolling='no' sandbox src="+row.publish_url+"></iframe><a class='link' href="+row.publish_url+"></a></div>");
     rowEl.append("<div class='title'>"+row.title+"</div>");
+    rowEl.append("<a class='author' href='/user/"+row.user_id+"'><i class='fa fa-user'></i></a>");
     rowEl.css("animation-delay",i * .05 +"s");
     table.append(rowEl);
   }
