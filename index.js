@@ -63,7 +63,7 @@ app.get('/search', function(req, res) {
 //Gets the stats for the latest created published projects
 app.get('/count-created', function (req, res) {
   var query = "select age(date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD HH24 MI') at time zone 'PST')) as age, count(*) from projects where age(date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD HH24 MI') at time zone 'PST')) >= '0 days' and age(date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD HH24 MI') at time zone 'PST')) < '9 days' group by age";
-  search(query, req, res);
+  fancySearch(query, [], req, res);
 });
 
 //Finds projects by description & title
@@ -77,8 +77,9 @@ app.get('/find-projects', function (req, res) {
     termsString = termsString + "%" + terms[i] + "%";
   }
 
-  var query = "select * from projects where publish_url is not NULL and lower(title) similar to '"+termsString+"' or lower(description) similar to '"+termsString+"' limit 40";
-  search(query, req, res);
+  var arguments = [termsString];
+  var query = "select * from projects where publish_url is not NULL and lower(title) similar to $1::text or lower(description) similar to $1::text limit 40";
+  fancySearch(query, arguments, req, res);
 });
 
 //Finds projects by author
@@ -91,34 +92,33 @@ app.get('/author', function (req, res) {
     if(i != 0){ termsString = termsString + "|"; }
     termsString = termsString + "%" + terms[i] + "%";
   }
-
-  var query = "select users.id, projects.* from users, projects where projects.publish_url is not NULL and users.id = projects.user_id and lower(users.name) similar to '"+termsString+"' limit 40";
-  search(query, req, res);
+  var arguments = [termsString];
+  var query = "select users.id, projects.* from users, projects where projects.publish_url is not NULL and users.id = projects.user_id and lower(users.name) similar to $1::text limit 40";
+  fancySearch(query, arguments, req, res);
 });
-
 
 //Gets the latest updated projects
 app.get('/count-updated', function (req, res) {
   var query = "select age(date_trunc('day',to_timestamp(date_updated, 'YYYY-MM-DD HH24 MI') at time zone 'PST')) as age, count(*) from projects where age(date_trunc('day',to_timestamp(date_updated, 'YYYY-MM-DD HH24 MI') at time zone 'PST')) > '0 days' and age(date_trunc('day',to_timestamp(date_updated, 'YYYY-MM-DD HH24 MI') at time zone 'PST')) < '9 days' group by age";
-  search(query, req, res);
+  fancySearch(query, [], req, res);
 });
 
 //Monthly-count
 app.get('/monthly-count', function (req, res) {
   var query = "select to_date(date_created, 'YYYY-MM-DD') , count(*) from projects where publish_url is not NULL group by to_date(date_created, 'YYYY-MM-DD') order by to_date(date_created, 'YYYY-MM-DD') desc limit 30";
-  search(query, req, res);
+  fancySearch(query, [], req, res);
 });
 
 // Last 10 projects updated that are published
 app.get('/latest', function (req, res) {
   var query = "select * from projects where published_id is not null order by date_updated desc limit 10";
-  search(query, req, res);
+  fancySearch(query,[], req, res);
 });
 
 // Last 30 projects updated that are published
 app.get('/kiosk-items', function (req, res) {
   var query = "select * from projects where published_id is not null order by date_updated desc limit 30";
-  search(query, req, res);
+  fancySearch(query, [], req, res);
 });
 
 // Newest projects published on a particular day
@@ -126,24 +126,25 @@ app.get('/published-per-day', function (req, res) {
   var url_parts = url.parse(req.url, true);
   var date = url_parts.query.date;
   var limit = url_parts.query.count;
-  var query = "select * from projects where to_date(date_created,'YYYY-MM-DD') = to_date('"+date+"','YYYY-MM-DD') and publish_url is not NULL order by random() limit " + limit;
-  search(query, req, res);
+  var query = "select * from projects where to_date(date_created,'YYYY-MM-DD') = to_date($1::text,'YYYY-MM-DD') and publish_url is not NULL order by random() limit $2::int";
+  fancySearch(query, [date,limit] ,req, res);
 });
 
 // Gets latest published images
 app.get('/latest-images', function (req, res) {
   var url_parts = url.parse(req.url, true);
   var count = parseInt(url_parts.query.count) || 10;
-  var query = "select newImages.path, newImages.id, projects.published_id, projects.publish_url from (select path, max(id) as id from \"publishedFiles\" where path like '%.svg' or path like '%.png' or path like '%.jpg' group by path order by max(id) desc limit "+count+") as newImages, \"publishedFiles\", projects where \"publishedFiles\".id = newImages.id and projects.published_id = \"publishedFiles\".published_id";
-  search(query, req, res);
+  var query = "select newImages.path, newImages.id, projects.published_id, projects.publish_url from (select path, max(id) as id from \"publishedFiles\" where path like '%.svg' or path like '%.png' or path like '%.jpg' group by path order by max(id) desc limit $1::int) as newImages, \"publishedFiles\", projects where \"publishedFiles\".id = newImages.id and projects.published_id = \"publishedFiles\".published_id";
+  var arguments = [count];
+  fancySearch(query, arguments, req, res);
 });
 
-function search(query, req, res){
+function fancySearch(query, parameters, req, res){
   pg.connect(conString, function(err, client, done) {
     if(err) {
       return console.error('error fetching client from pool', err);
     }
-    client.query(query, function(err, result) {
+    client.query(query, parameters,function(err, result) {
       done(); // Releases the client back to the pool
       if(err) {
         return console.error('error running query', err);
