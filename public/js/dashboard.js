@@ -1,15 +1,14 @@
 $(document).ready(function(){
-  var parameters = {};
+  var currentDate = new Date();
+  var newDate = formatDate(currentDate);
+
+  var parameters = {
+    "date" : newDate
+  };
 
   $.get('/count-created',parameters, function(data) {
-    // console.log(data);
     buildGraph(data,"created");
   });
-
-  // $.get('/count-updated',parameters, function(data) {
-  //   buildGraph(data,"updated");
-  // });
-  //
 
   $.get('/latest',parameters, function(data) {
     writeTable(data);
@@ -20,18 +19,21 @@ $(document).ready(function(){
 
 function buildGraph(data, type){
 
-
   $("[stat="+type+"]").removeClass("hidden");
 
   var now = new Date();
-
   var values = [];
 
   //Grab the rest of the values
-  for(var i = 1; i < data.rows.length; i++){
+  for(var i = 0; i < data.rows.length; i++){
     var row = data.rows[i];
-    values.push(parseInt(row.count));
+    if(row.age){
+      values.push(parseInt(row.count));
+    }
   }
+
+  var min = getMin(values);
+  var max = getMax(values);
 
   var dailyData = {};
 
@@ -42,9 +44,6 @@ function buildGraph(data, type){
     dailyData[age] = count;
   }
 
-  var min = getMin(values);
-  var max = getMax(values);
-
   var maxLabel = Math.round(max / 100) * 100;
 
   var midLine = $("[stat="+type+"] .mid-line");
@@ -54,7 +53,7 @@ function buildGraph(data, type){
   midLine.text(maxLabel/2).css("bottom", 100/2 * maxLabel / max + "%");
 
   for(var i = 0; i < data.rows.length; i++){
-    // var row = data.rows[i];
+    var row = data.rows[i];
     var age = i;
     var count = dailyData[age];
 
@@ -112,6 +111,7 @@ function writeImages(data){
 }
 
 function writeTable(data){
+
   var table = $(".results");
   for(var i = 0; i < data.rows.length; i++){
     var row = data.rows[i];

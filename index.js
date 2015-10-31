@@ -83,10 +83,13 @@ app.get('/get-username', function (req, res) {
   fancySearch(query, arguments, req, res);
 });
 
-
 //Gets the stats for the latest created published projects
 app.get('/count-created', function (req, res) {
-  var query = "select age(date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD HH24 MI') at time zone 'PST')) as age, count(*) from projects where age(date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD HH24 MI') at time zone 'PST')) >= '0 days' and age(date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD HH24 MI') at time zone 'PST')) < '9 days' group by age";
+
+  // var query = "select age(date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD HH24 MI') at time zone 'PST')) as age, count(*) from projects where age(date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD HH24 MI') at time zone 'PST')) >= '0 days' and age(date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD HH24 MI') at time zone 'PST')) < '9 days' group by age";
+  var url_parts = url.parse(req.url, true);
+  var date = url_parts.query.date;
+  var query ="select date_trunc('day',age('"+date+"' at time zone 'PST' ,date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD') at time zone 'PST'))) as age, count(*) from projects where date_trunc('day',age('"+date+"' at time zone 'PST' ,date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD') at time zone 'PST'))) >= '0' group by age order by age limit 10";
   fancySearch(query, [], req, res);
 });
 
@@ -116,6 +119,7 @@ app.get('/author', function (req, res) {
     if(i != 0){ termsString = termsString + "|"; }
     termsString = termsString + "%" + terms[i] + "%";
   }
+
   var arguments = [termsString];
   var query = "select * from users where lower(users.name) similar to $1::text order by name";
   fancySearch(query, arguments, req, res);
