@@ -64,7 +64,6 @@ function previousDay(){
   var newDate = currentDate.setDate(currentDate.getDate() - 1);
   currentDate = new Date(newDate);
   buildDaily(currentDate);
-
 }
 
 function selectDay(date){
@@ -131,7 +130,7 @@ function buildMonth(data){
     var day = days[i];
     var count = parseInt(day.count);
 
-    var date = new Date(day.to_date);
+    var date = new Date(day.date + " PST");
 
     var dayOfWeek = weekDaysShort[date.getDay()];
     var dayNumber = date.getDate();

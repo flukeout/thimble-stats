@@ -19,29 +19,32 @@ $(document).ready(function(){
 
 function buildGraph(data, type){
 
+  console.log(data);
+
+
   $("[stat="+type+"]").removeClass("hidden");
 
   var now = new Date();
   var values = [];
 
-  //Grab the rest of the values
+  //This just gets the min and max..!
   for(var i = 0; i < data.rows.length; i++){
     var row = data.rows[i];
-    if(row.age){
-      values.push(parseInt(row.count));
-    }
+    values.push(parseInt(row.count));
   }
 
   var min = getMin(values);
   var max = getMax(values);
 
-  var dailyData = {};
+  var dailyData = [];
 
   for(var i = 0 ; i < data.rows.length; i++){
     var row = data.rows[i];
-    var age = row.age.days || 0;
-    var count = row.count;
-    dailyData[age] = count;
+
+    dailyData.push({
+      "date" : row.date,
+      "count" : row.count
+    });
   }
 
   var maxLabel = Math.round(max / 100) * 100;
@@ -52,12 +55,13 @@ function buildGraph(data, type){
   maxLine.text(maxLabel).css("bottom", 100 * maxLabel / max + "%");
   midLine.text(maxLabel/2).css("bottom", 100/2 * maxLabel / max + "%");
 
-  for(var i = 0; i < data.rows.length; i++){
-    var row = data.rows[i];
-    var age = i;
-    var count = dailyData[age];
 
-    if(age == 0){
+  for(var i = 0; i < dailyData.length; i++){
+    var row = dailyData[i];
+
+    var count = row.count;
+
+    if(i == 0){
       $("[stat="+type+"] .today .count").text(count);
     }
 

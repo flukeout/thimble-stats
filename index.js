@@ -86,10 +86,15 @@ app.get('/get-username', function (req, res) {
 //Gets the stats for the latest created published projects
 app.get('/count-created', function (req, res) {
 
-  // var query = "select age(date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD HH24 MI') at time zone 'PST')) as age, count(*) from projects where age(date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD HH24 MI') at time zone 'PST')) >= '0 days' and age(date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD HH24 MI') at time zone 'PST')) < '9 days' group by age";
   var url_parts = url.parse(req.url, true);
   var date = url_parts.query.date;
-  var query ="select date_trunc('day',age('"+date+"' at time zone 'PST' ,date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD') at time zone 'PST'))) as age, count(*) from projects where date_trunc('day',age('"+date+"' at time zone 'PST' ,date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD') at time zone 'PST'))) >= '0' group by age order by age limit 10";
+  // var query ="select date_trunc('day',age('"+date+"' at time zone 'PST' ,date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD') at time zone 'PST'))) as age, count(*) from projects where date_trunc('day',age('"+date+"' at time zone 'PST' ,date_trunc('day',to_timestamp(date_created, 'YYYY-MM-DD') at time zone 'PST'))) >= '0' group by age order by age limit 10";
+
+  // var query = "select date_trunc('day',age(_date_created)) as age,count(*) from projects where age(_date_created) < '9 days' group by age";
+
+  var query = "select to_char(_date_created at time zone 'PST','YYYY MM DD') as date,count(*) from projects group by date order by date desc limit 9";
+
+
   fancySearch(query, [], req, res);
 });
 
@@ -133,19 +138,19 @@ app.get('/count-updated', function (req, res) {
 
 //Monthly-count
 app.get('/monthly-count', function (req, res) {
-  var query = "select to_date(date_created, 'YYYY-MM-DD') , count(*) from projects where publish_url is not NULL group by to_date(date_created, 'YYYY-MM-DD') order by to_date(date_created, 'YYYY-MM-DD') desc limit 30";
+  var query = "begin; set local timezone to 'PST8PDT'; select to_char(_date_created, 'YYYY-MM-DD') as date,count(*) from projects where age(_date_created) < '30 days' group by date order by date desc; end;";
   fancySearch(query, [], req, res);
 });
 
 // Last 10 projects updated that are published
 app.get('/latest', function (req, res) {
-  var query = "select * from projects where published_id is not null order by date_updated desc limit 10";
+  var query = "select * from projects where published_id is not null order by _date_updated desc limit 10";
   fancySearch(query,[], req, res);
 });
 
 // Last 30 projects updated that are published
 app.get('/kiosk-items', function (req, res) {
-  var query = "select * from projects where published_id is not null order by date_updated desc limit 30";
+  var query = "select * from projects where published_id is not null order by _date_updated desc limit 30";
   fancySearch(query, [], req, res);
 });
 
@@ -154,7 +159,12 @@ app.get('/published-per-day', function (req, res) {
   var url_parts = url.parse(req.url, true);
   var date = url_parts.query.date;
   var limit = url_parts.query.count;
-  var query = "select * from projects where to_date(date_created,'YYYY-MM-DD') = to_date($1::text,'YYYY-MM-DD') and publish_url is not NULL order by random() limit $2::int";
+  var query = "select * from projects where to_char(_date_created,'YYYY MM DD') = $1::text and publish_url is not NULL order by random() limit $2::int";
+
+// select * from projects where to_char(_date_created,'YYYY MM DD') = '"+date+"' and publish_url is not NULL order by random() limit " + limit;
+
+
+
   fancySearch(query, [date,limit] ,req, res);
 });
 
