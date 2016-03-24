@@ -3,12 +3,19 @@ var index = 0;
 
 $(document).ready(function(){
 
+
   $(".project").on("keypress",function(e){
     if(e.keyCode == 13){
       searchProjects();
       startSearch();
     }
   });
+
+  $(".search-projects").on("click",function(){
+    searchProjects();
+    startSearch();
+  });
+
 
   $(".author").on("keypress",function(e){
     if(e.keyCode == 13){
@@ -17,13 +24,40 @@ $(document).ready(function(){
     }
   });
 
+  $(".search-authors").on("click",function(){
+    searchAuthors();
+    startSearch();
+  });
+
+
   $(".project").focus();
   $("input").val("");
+
+
+
+  //Checks to see if there are already any search terms.
+  var projectTerms = getUrlParameter('terms') || "";
+  var userTerms = getUrlParameter('user') || "";
+
+  if(projectTerms.length > 0) {
+    var inputValue = projectTerms.replace(/,/g, ' ');
+    $(".project").val(inputValue);
+    $(".project").focus();
+    startSearch();
+    searchProjects();
+  }
+
+  if(userTerms.length > 0) {
+    var inputValue = userTerms.replace(/,/g, ' ');
+    $(".author").val(inputValue);
+    $(".author").focus();
+    startSearch();
+    searchAuthors();
+  }
 });
 
 function startSearch(){
   $(".results-wrapper").addClass("hidden");
-  $("input").blur();
   $(".throbber").removeClass("hidden");
 }
 
@@ -32,7 +66,12 @@ function endSearch(){
 }
 
 function searchProjects(){
+
   var inputVal = $(".project").val().toLowerCase();
+
+  var searchParameters = inputVal.split(" ").join(",");
+  window.history.replaceState(null,null,"/search?terms=" + searchParameters);
+
   var terms = [];
   if(inputVal){
     $(".results *").remove();
@@ -40,6 +79,8 @@ function searchProjects(){
     var parameters = {
       "terms" : JSON.stringify(terms)
     };
+
+
     $.get('/find-projects',parameters, function(data) {
       writeTable(data);
     });
@@ -48,6 +89,10 @@ function searchProjects(){
 
 function searchAuthors(){
   var inputVal = $(".author").val().toLowerCase();
+
+  var searchParameters = inputVal.split(" ").join(",");
+  window.history.replaceState(null,null,"/search?user=" + searchParameters);
+
   var terms = [];
   if(inputVal){
     $(".results *").remove();
@@ -88,5 +133,19 @@ function writeTable(data){
     rowEl.append("<div class='title'>"+row.title+"</div>");
     rowEl.append("<a class='author' href='/user/"+row.user_id+"'><i class='fa fa-user'></i></a>");
     table.append(rowEl);
+  }
+}
+
+
+function getUrlParameter(sParam){
+  var sPageURL = window.location.search.substring(1);
+  var sURLVariables = sPageURL.split('&');
+  for (var i = 0; i < sURLVariables.length; i++)
+  {
+    var sParameterName = sURLVariables[i].split('=');
+    if (sParameterName[0] == sParam)
+    {
+      return sParameterName[1];
+    }
   }
 }

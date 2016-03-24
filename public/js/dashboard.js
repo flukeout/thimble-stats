@@ -19,9 +19,6 @@ $(document).ready(function(){
 
 function buildGraph(data, type){
 
-  console.log(data);
-
-
   $("[stat="+type+"]").removeClass("hidden");
 
   var now = new Date();

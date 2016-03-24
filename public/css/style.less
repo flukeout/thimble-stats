@@ -421,14 +421,39 @@ h1 {
   }
 }
 
+
+.btn {
+  // color: white;
+  display: inline-block;
+  cursor: pointer;
+  position: relative;
+  padding: 4px 8px 0 8px;
+  line-height: 28px;
+  opacity: .7;
+  font-weight: bold;
+  color: #2d9961;
+  background: white;
+  // color: pink;
+
+
+  &:hover {
+    opacity: 1;
+  }
+
+}
+
 .search-ui {
-  text-align: center;
+  // text-align: center;
   margin-bottom: 30px;
   font-size: 20px;
   color: rgba(255,255,255,.7);
   background: #2d9961;
-  padding: 15px;
-  line-height: 175%;
+  padding: 15px 25px;
+  line-height: 180%;
+
+  div:not(:last-child) {
+    margin-bottom: 8px;
+  }
 
   a {
     color: white;
