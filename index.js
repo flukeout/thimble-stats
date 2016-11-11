@@ -110,7 +110,7 @@ app.get('/find-projects', function (req, res) {
   }
 
   var arguments = [termsString];
-  var query = "select * from projects where publish_url is not NULL and lower(title) similar to $1::text or lower(description) similar to $1::text limit 40";
+  var query = "select * from projects where publish_url is not NULL and lower(title) similar to $1::text or lower(description) similar to $1::text limit 100";
   fancySearch(query, arguments, req, res);
 });
 
