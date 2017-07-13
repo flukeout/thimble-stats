@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Simple stats dashboard for Thimble",
   "main": "index.js",
-  "engines: {
+  "engines": {
     "node": "^6.11.1"
   },
   "scripts": {
